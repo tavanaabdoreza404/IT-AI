@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>داشبورد طرح جامع هوشمندسازی واحد IT سازمان | AI IT Command Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0b1120;
+      --bg-secondary: #111827;
+      --bg-card: #1e293b;
+      --bg-card-hover: #263349;
+      --border-color: #334155;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-primary: #3b82f6;
+      --accent-ai: #8b5cf6;
+      --status-success: #10b981;
+      --status-warning: #f59e0b;
+      --status-danger: #ef4444;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f1f5f9;
+      --bg-secondary: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f8fafc;
+      --border-color: #e2e8f0;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --accent-primary: #1d4ed8;
+      --accent-ai: #7c3aed;
+      --status-success: #059669;
+      --status-warning: #d97706;
+      --status-danger: #dc2626;
+      --shadow: 0 4px 15px -3px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Vazirmatn', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      display: flex;
+      min-height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 270px;
+      background-color: var(--bg-secondary);
+      border-left: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 1rem;
+      transition: width 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .sidebar.collapsed {
+      width: 80px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 1.5rem;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-ai));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #fff;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .brand-text h1 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .brand-text span {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .sidebar.collapsed .brand-text,
+    .sidebar.collapsed .nav-label {
+      display: none;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex: 1;
+    }
+
+    .nav-item {
+      padding: 0.75rem 0.9rem;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
+      color: var(--accent-primary);
+      border-right: 3px solid var(--accent-primary);
+      font-weight: 700;
+    }
+
+    .nav-icon {
+      font-size: 1.15rem;
+      width: 24px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* Main Content */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    .topbar {
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.5rem 0.9rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      border-color: var(--accent-primary);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-ai));
+      color: #fff;
+      border: none;
+    }
+
+    .btn-success {
+      background-color: var(--status-success);
+      color: #fff;
+      border: none;
+    }
+
+    .btn-danger {
+      background-color: transparent;
+      border: 1px solid var(--status-danger);
+      color: var(--status-danger);
+    }
+
+    .badge-ai {
+      background: rgba(139, 92, 246, 0.18);
+      color: #c4b5fd;
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    [data-theme="light"] .badge-ai {
+      color: var(--accent-ai);
+    }
+
+    .content {
+      padding: 1.75rem;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .module-section {
+      display: none;
+    }
+
+    .module-section.active {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-header {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+
+    .section-header p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+
+    /* Grids & Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+
+    .kpi-title {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .kpi-value {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+    }
+
+    .kpi-trend {
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .text-success { color: var(--status-success); }
+    .text-warning { color: var(--status-warning); }
+    .text-danger { color: var(--status-danger); }
+    .text-ai { color: var(--accent-ai); }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Progress Bars */
+    .progress-item {
+      margin-bottom: 0.9rem;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .progress-bar-bg {
+      height: 8px;
+      background-color: var(--bg-primary);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-ai));
+      border-radius: 999px;
+    }
+
+    /* HITL Alert Box */
+    .hitl-card {
+      border-right: 4px solid var(--status-warning);
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.08), transparent);
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 10px;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      border-left: 1px solid var(--border-color);
+    }
+
+    .hitl-actions {
+      margin-top: 0.85rem;
+      display: flex;
+      gap: 0.6rem;
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th, td {
+      padding: 0.85rem 1rem;
+      text-align: right;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      color: var(--text-secondary);
+      font-weight: 600;
+      background-color: rgba(15, 23, 42, 0.25);
+    }
+
+    .status-pill {
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .pill-success { background: rgba(16, 185, 129, 0.15); color: var(--status-success); }
+    .pill-warning { background: rgba(245, 158, 11, 0.15); color: var(--status-warning); }
+    .pill-danger { background: rgba(239, 68, 68, 0.15); color: var(--status-danger); }
+    .pill-ai { background: rgba(139, 92, 246, 0.15); color: var(--accent-ai); }
+
+    /* Form & Inputs */
+    .input-box {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+
+    /* SVG Line Chart */
+    .chart-container {
+      width: 100%;
+      height: 210px;
+      margin-top: 1rem;
+    }
+
+    /* Roadmap Tree */
+    .tree-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .tree-node {
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem;
+      background-color: var(--bg-card);
+    }
+
+    .tree-node h4 {
+      font-size: 0.95rem;
+      color: var(--accent-primary);
+      margin-bottom: 0.6rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .tree-node ul {
+      list-style: disc;
+      padding-right: 1.25rem;
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    @media print {
+      .sidebar, .topbar, .no-print { display: none !important; }
+      body { background: #fff; color: #000; }
+      .module-section { display: block !important; margin-bottom: 2rem; }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 72px; padding: 1rem 0.5rem; }
+      .brand-text, .nav-label { display: none; }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-icon">AI</div>
+      <div class="brand-text">
+        <h1>مرکز فرماندهی IT</h1>
+        <span>AI IT Command Center</span>
+      </div>
+    </div>
+
+    <ul class="nav-list">
+      <li class="nav-item active" onclick="switchTab('mod1', this)">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">۱. داشبورد مرکزی و KPI</span>
+      </li>
+      <li class="nav-item" onclick="switchTab('mod2', this)">
+        <span class="nav-icon">🤖</span>
+        <span class="nav-label">۲. دستیار هوشمند IT</span>
+      </li>
+      <li class="nav-item" onclick="switchTab('mod3', this)">
+        <span class="nav-icon">🖥️</span>
+        <span class="nav-label">۳. پایش شبکه و سرورها</span>
+      </li>
+      <li class="nav-item" onclick="switchTab('mod4', this)">
+        <span class="nav-icon">💻</span>
+        <span class="nav-label">۴. مدیریت هوشمند دارایی‌ها</span>
+      </li>
+      <li class="nav-item" onclick="switchTab('mod5', this)">
+        <span class="nav-icon">📚</span>
+        <span class="nav-label">۵. پایگاه دانش هوشمند</span>
+      </li>
+      <li class="nav-item" onclick="switchTab('mod6', this)">
+        <span class="nav-icon">🗺️</span>
+        <span class="nav-label">۶. نقشه راه ۸ محور طرح جامع</span>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-right">
+        <button class="btn" onclick="toggleSidebar()" title="جمع/باز کردن منو">☰</button>
+        <div>
+          <strong>طرح جامع هوشمندسازی واحد IT سازمان</strong>
+          <span class="badge-ai" style="margin-right: 8px;">هسته پردازش AI فعال</span>
+        </div>
+      </div>
+      <div style="display:flex; gap:0.6rem; align-items:center;">
+        <span style="font-size:0.82rem; color:var(--text-secondary);">۴ آذر ۱۴۰۵</span>
+        <button class="btn" onclick="toggleTheme()" id="themeBtn">☀️ تم روشن</button>
+        <button class="btn btn-primary" onclick="window.print()">🖨️ خروجی گزارش</button>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- ماژول ۱: داشبورد مرکزی -->
+      <section id="mod1" class="module-section active">
+        <div class="section-header">
+          <div>
+            <h2>داشبورد مرکزی و نمای کلی (Central AI Dashboard)</h2>
+            <p>پایش ۳۶۰ درجه سلامت زیرساخت، تله‌متری زنده و مکانیزم تصمیم‌سازی Human-in-the-Loop</p>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="card">
+            <div class="kpi-title">نرخ پایداری زیرساخت (Uptime)</div>
+            <div class="kpi-value text-success">۹۹.۹۸٪</div>
+            <div class="kpi-trend text-success">▲ ۰.۰۴٪ بهبود نسبت به ماه گذشته</div>
+          </div>
+          <div class="card">
+            <div class="kpi-title">میانگین زمان رفع مشکل (MTTR)</div>
+            <div class="kpi-value">۱۸ دقیقه</div>
+            <div class="kpi-trend text-success">▼ ۴۲٪ کاهش با ارجاع خودکار NLP</div>
+          </div>
+          <div class="card">
+            <div class="kpi-title">تیکت‌های باز بحرانی</div>
+            <div class="kpi-value text-warning">۲ مورد</div>
+            <div class="kpi-trend text-secondary">در حال پایش لحظه‌ای توسط دستیار AI</div>
+          </div>
+          <div class="card">
+            <div class="kpi-title">صرفه‌جویی هزینه‌ای اتوماسیون</div>
+            <div class="kpi-value text-ai">۱.۴۵ میلیارد</div>
+            <div class="kpi-trend text-ai">تومان در سال جاری (پیش‌بینی TCO)</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- HITL Alerts -->
+          <div class="card">
+            <h3 style="font-size:1.05rem; margin-bottom:1rem;">⚡ مکانیزم تأیید انسانی (Human-in-the-Loop)</h3>
+            <div class="hitl-card" id="hitl-1">
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
+                <strong class="text-warning">هشدار افزایش غیرعادی بار پردازشی DB-Core-02</strong>
+                <span class="status-pill pill-ai">اطمینان AI: ۹۴٪</span>
+              </div>
+              <p style="font-size:0.84rem; color:var(--text-secondary);">
+                مدل پیش‌بینی مصرف منابع، اشباع RAM تا ۲۵ دقیقه آینده را تشخیص داده است. پیشنهاد: تخصیص خودکار ۱۶ گیگابایت حافظه موقت از کلاستر پشتیبان.
+              </p>
+              <div class="hitl-actions">
+                <button class="btn btn-success" onclick="resolveHitl('hitl-1', 'تخصیص منابع با موفقیت اجرا شد.')">✓ تأیید و اجرای خودکار</button>
+                <button class="btn btn-danger" onclick="resolveHitl('hitl-1', 'پیشنهاد رد شد و در حالت پایش دستی قرار گرفت.')">✕ رد پیشنهاد</button>
+              </div>
+            </div>
+
+            <div class="hitl-card" id="hitl-2" style="border-right-color: var(--status-danger);">
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
+                <strong class="text-danger">الگوی تلاش ورود ناموفق متوالی (Brute-Force)</strong>
+                <span class="status-pill pill-danger">امنیتی</span>
+              </div>
+              <p style="font-size:0.84rem; color:var(--text-secondary);">
+                شناسایی ۱۴۲ درخواست مشکوک از رنج IP خارجی روی درگاه VPN. پیشنهاد: مسدودسازی موقت در فایروال لبه به مدت ۲۴ ساعت.
+              </p>
+              <div class="hitl-actions">
+                <button class="btn btn-success" onclick="resolveHitl('hitl-2', 'قانون مسدودسازی در فایروال اعمال شد.')">✓ مسدودسازی فوری</button>
+                <button class="btn btn-danger" onclick="resolveHitl('hitl-2', 'هشدار نادیده گرفته شد.')">✕ نادیده گرفتن</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Strategic Goals -->
+          <div class="card">
+            <h3 style="font-size:1.05rem; margin-bottom:1rem;">🎯 ردیابی اهداف استراتژیک هوشمندسازی IT</h3>
+            <div class="progress-item">
+              <div class="progress-label"><span>۱. استقرار سامانه تیکتینگ مبتنی بر NLP</span><strong>۹۲٪</strong></div>
+              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:92%"></div></div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-label"><span>۲. پایش پیش‌بینانه سرورها و تشخیص ناهنجاری</span><strong>۸۵٪</strong></div>
+              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:85%"></div></div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-label"><span>۳. یکپارچه‌سازی بانک دانش و جستجوی معنایی</span><strong>۷۸٪</strong></div>
+              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:78%"></div></div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-label"><span>۴. هوشمندسازی چرخه عمر دارایی‌ها (TCO)</span><strong>۷۰٪</strong></div>
+              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:70%"></div></div>
+            </div>
+            <div class="progress-item">
+              <div class="progress-label"><span>۵. مرکز عملیات امنیت خودکار (AI SOC)</span><strong>۶۴٪</strong></div>
+              <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:64%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Telemetry Chart -->
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3 style="font-size:1.05rem;">📈 تله‌متری زنده ترافیک شبکه و بار پردازشی (۲۴ ساعت اخیر)</h3>
+            <span class="status-pill pill-success">به‌روزرسانی زنده</span>
+          </div>
+          <div class="chart-container">
+            <svg viewBox="0 0 800 180" width="100%" height="100%" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="gradArea" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.35"/>
+                  <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.0"/>
+                </linearGradient>
+              </defs>
+              <line x1="0" y1="45" x2="800" y2="45" stroke="#334155" stroke-dasharray="4" />
+              <line x1="0" y1="90" x2="800" y2="90" stroke="#334155" stroke-dasharray="4" />
+              <line x1="0" y1="135" x2="800" y2="135" stroke="#334155" stroke-dasharray="4" />
+              <path d="M0,140 Q100,110 200,120 T400,75 T600,55 T800,40 L800,180 L0,180 Z" fill="url(#gradArea)" />
+              <path d="M0,140 Q100,110 200,120 T400,75 T600,55 T800,40" fill="none" stroke="#3b82f6" stroke-width="3" />
+              <path d="M0,155 Q120,145 240,130 T480,105 T720,85 L800,80" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-dasharray="6,4" />
+            </svg>
+          </div>
+          <div style="display:flex; gap:1.5rem; font-size:0.8rem; color:var(--text-secondary); margin-top:0.5rem;">
+            <span>🔵 ترافیک عملیاتی شبکه (Gbps)</span>
+            <span>🟣 خط پیش‌بینی هوش مصنوعی (Forecast)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ماژول ۲: دستیار هوشمند IT -->
+      <section id="mod2" class="module-section">
+        <div class="section-header">
+          <div>
+            <h2>دستیار هوشمند واحد IT (AI IT Assistant)</h2>
+            <p>تحلیل خودکار متن تیکت‌ها با مدل NLP، اولویت‌دهی و ارجاع هوشمند به کارشناس متخصص</p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3 style="font-size:1.05rem; margin-bottom:0.75rem;">✍️ شبیه‌ساز ثبت و تحلیل هوشمند تیکت</h3>
+            <textarea id="ticketInput" class="input-box" rows="3" placeholder="شرح مشکل را بنویسید (مثال: از صبح دسترسی به سرور مالی و شبکه داخلی طبقه سوم قطع شده است)..."></textarea>
+            <button class="btn btn-primary" onclick="analyzeTicket()">پردازش با موتور NLP</button>
+            <div id="ticketResult" style="margin-top:1rem; padding:0.9rem; border-radius:10px; background:var(--bg-primary); display:none; font-size:0.88rem; line-height:1.8;"></div>
+          </div>
+
+          <div class="card">
+            <h3 style="font-size:1.05rem; margin-bottom:0.75rem;">🔍 تحلیل پیشگیرانه الگوی مشکلات پرتکرار</h3>
+            <div class="hitl-card" style="border-right-color: var(--accent-ai);">
+              <strong>کشف الگوی تکراری در سوییچ طبقه ۳</strong>
+              <p style="font-size:0.84rem; color:var(--text-secondary); margin-top:0.3rem;">
+                طی ۴۸ ساعت گذشته ۷ تیکت مرتبط با افت سرعت در VLAN-30 ثبت شده است. پیشنهاد AI: بررسی پورت Uplink سوییچ شماره ۳ و به‌روزرسانی Firmware.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ماژول ۳: پایش هوشمند شبکه و سرورها -->
+      <section id="mod3" class="module-section">
+        <div class="section-header">
+          <div>
+            <h2>پایش هوشمند شبکه و سرورها (AI Network & Server Monitoring)</h2>
+            <p>وضعیت لحظه‌ای منابع زیرساخت، تشخیص ناهنجاری سخت‌افزاری و پایش امنیت فایروال</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>نام سرور / تجهیز</th>
+                  <th>نقش عملیاتی</th>
+                  <th>مصرف CPU</th>
+                  <th>مصرف RAM</th>
+                  <th>پیش‌بینی سلامت AI</th>
+                  <th>وضعیت</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>SRV-APP-01</strong></td>
+                  <td>سرور برنامه‌های سازمانی</td>
+                  <td>۴۲٪</td>
+                  <td>۶۱٪</td>
+                  <td>پایدار (بدون ناهنجاری)</td>
+                  <td><span class="status-pill pill-success">عملیاتی</span></td>
+                </tr>
+                <tr>
+                  <td><strong>DB-CORE-02</strong></td>
+                  <td>پایگاه داده مرکزی</td>
+                  <td>۷۸٪</td>
+                  <td>۸۹٪</td>
+                  <td>احتمال نیاز به ارتقاء حافظه</td>
+                  <td><span class="status-pill pill-warning">هشدار اولیه</span></td>
+                </tr>
+                <tr>
+                  <td><strong>FW-EDGE-01</strong></td>
+                  <td>فایروال اصلی سازمان</td>
+                  <td>۳۵٪</td>
+                  <td>۴۸٪</td>
+                  <td>مسدودسازی خودکار ۱۴۲ IP مشکوک</td>
+                  <td><span class="status-pill pill-ai">محافظت AI</span></td>
+                </tr>
+                <tr>
+                  <td><strong>BKP-STORAGE-04</strong></td>
+                  <td>مخزن پشتیبان‌گیری ابری</td>
+                  <td>۲۱٪</td>
+                  <td>۳۹٪</td>
+                  <td>سلامت دیسک‌ها ۹۹٪</td>
+                  <td><span class="status-pill pill-success">عملیاتی</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ماژول ۴: مدیریت هوشمند دارایی‌ها -->
+      <section id="mod4" class="module-section">
+        <div class="section-header">
+          <div>
+            <h2>مدیریت هوشمند دارایی‌ها و تجهیزات (IT Asset Intelligence)</h2>
+            <p>شناسنامه اموال، تحلیل هزینه کل مالکیت (TCO) و الگوریتم تصمیم‌ساز تعمیر در برابر تعویض</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>کد اموال</th>
+                  <th>تجهیز / مدل</th>
+                  <th>واحد بهره‌بردار</th>
+                  <th>عمر مفید باقی‌مانده</th>
+                  <th>هزینه تعمیرات سالانه</th>
+                  <th>پیشنهاد الگوریتم Repair vs. Replace</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>IT-AST-1042</td>
+                  <td>سرور HP ProLiant DL380 G9</td>
+                  <td>مرکز داده</td>
+                  <td>۸ ماه</td>
+                  <td>۴۸ میلیون تومان</td>
+                  <td><span class="status-pill pill-danger">توصیه به جایگزینی (Replace)</span></td>
+                </tr>
+                <tr>
+                  <td>IT-AST-2085</td>
+                  <td>سوییچ سیسکو Catalyst 9200</td>
+                  <td>شبکه مرکزی</td>
+                  <td>۴۲ ماه</td>
+                  <td>۴ میلیون تومان</td>
+                  <td><span class="status-pill pill-success">نگهداری و تعمیر (Repair)</span></td>
+                </tr>
+                <tr>
+                  <td>IT-AST-3190</td>
+                  <td>ورک‌استیشن مهندسی Dell</td>
+                  <td>واحد طراحی</td>
+                  <td>۱۶ ماه</td>
+                  <td>۱۴ میلیون تومان</td>
+                  <td><span class="status-pill pill-warning">ارتقاء رم و SSD</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ماژول ۵: پایگاه دانش هوشمند -->
+      <section id="mod5" class="module-section">
+        <div class="section-header">
+          <div>
+            <h2>مدیریت دانش سازمانی هوشمند (AI Knowledge Base)</h2>
+            <p>جستجوی معنایی (Semantic Search) در مستندات فنی، راهنماهای رفع خطا و فایل‌های پیکربندی</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:1.25rem;">
+          <input type="text" id="kbSearch" class="input-box" placeholder="جستجوی معنایی در مستندات (مثال: تنظیمات فایروال، بازیابی دیتابیس، استاندارد UI/UX)..." onkeyup="filterKb()">
+        </div>
+
+        <div class="grid-2" id="kbList">
+          <div class="card kb-item">
+            <h4>📘 دستورالعمل استاندارد طراحی داشبوردهای مدیریتی</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-top:0.4rem;">
+              شامل استانداردهای چیدمان راست‌به‌چپ (RTL)، فونت Vazirmatn، سیستم تم روشن/تاریک و اصول بصری‌سازی داده‌ها.
+            </p>
+          </div>
+          <div class="card kb-item">
+            <h4>🛡️ پروتکل واکنش سریع به حملات DDoS و Brute-Force</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-top:0.4rem;">
+              راهنمای گام‌به‌گام اعمال محدودیت نرخ درخواست (Rate Limiting) و فعال‌سازی قوانین مسدودسازی خودکار در فایروال.
+            </p>
+          </div>
+          <div class="card kb-item">
+            <h4>🗄️ راهنمای بهینه‌سازی کوئری‌ها و بکاپ‌گیری از PostgreSQL</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-top:0.4rem;">
+              روش‌های کاهش مصرف حافظه در پایگاه‌های داده پرترافیک و زمان‌بندی بکاپ‌های افزایشی.
+            </p>
+          </div>
+          <div class="card kb-item">
+            <h4>🔧 ماتریس تصمیم‌گیری محاسبه استهلاک و TCO تجهیزات</h4>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-top:0.4rem;">
+              فرمول محاسبه نقطه سربه‌سر هزینه تعمیرات در برابر خرید تجهیزات جدید در بازه ۱ تا ۳ ساله.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ماژول ۶: نقشه راه ۸ محور طرح جامع -->
+      <section id="mod6" class="module-section">
+        <div class="section-header">
+          <div>
+            <h2>نقشه راه و ساختار درختی ۸ محور طرح جامع هوشمندسازی</h2>
+            <p>نمای سلسله‌مراتبی محورهای تحول دیجیتال و هوشمندسازی واحد فناوری اطلاعات</p>
+          </div>
+        </div>
+
+        <div class="tree-grid">
+          <div class="tree-node">
+            <h4><span>محور ۱: زیرساخت هوشمند و ابری</span><span>۸۸٪</span></h4>
+            <ul>
+              <li>مجازی‌سازی یکپارچه منابع پردازشی</li>
+              <li>پایش خودکار مصرف انرژی و منابع</li>
+            </ul>
+          </div>
+          <div class="tree-node">
+            <h4><span>محور ۲: امنیت سایبری مبتنی بر AI</span><span>۷۶٪</span></h4>
+            <ul>
+              <li>تشخیص ناهنجاری ترافیک شبکه</li>
+              <li>پاسخ خودکار به تهدیدات (SOAR)</li>
+            </ul>
+          </div>
+          <div class="tree-node">
+            <h4><span>محور ۳: میز خدمت هوشمند (ITSM)</span><span>۹۲٪</span></h4>
+            <ul>
+              <li>دسته‌بندی و ارجاع تیکت با NLP</li>
+              <li>چت‌بات پاسخگوی سطح یک کاربران</li>
+            </ul>
+          </div>
+          <div class="tree-node">
+            <h4><span>محور ۴: حاکمیت داده و هوش تجاری</span><span>۸۰٪</span></h4>
+            <ul>
+              <li>انبار داده متمرکز واحد IT</li>
+              <li>داشبوردهای تصمیم‌یار مدیریتی</li>
+            </ul>
+          </div>
+          <div class="tree-node">
+            <h4><span>محور ۵: مدیریت دارایی‌ها و TCO</span><span>۷۰٪</span></h4>
+            <ul>
+              <li>شناسنامه دیجیتال تمام تجهیزات</li>
+              <li>پیش‌بینی بودجه و چرخه جایگزینی</li>
+            </ul>
+          </div>
+          <div class="tree-node">
+            <h4><span>محور ۶: مدیریت دانش سازمانی</span><span>۷۸٪</span></h4>
+            <ul>
+              <li>موتور جستجوی معنایی مستندات</li>
+              <li>خلاصه‌سازی خودکار گزارش‌های فنی</li>
+            </ul>
+          </div>
+          <div class="tree-node">
+            <h4><span>محور ۷: اتوماسیون فرآیندهای عملیاتی</span><span>۸۳٪</span></h4>
+            <ul>
+              <li>پشتیبان‌گیری و تست بازیابی خودکار</li>
+              <li>تأمین دسترسی‌های سازمانی با جریان کار</li>
+            </ul>
+          </div>
+          <div class="tree-node">
+            <h4><span>محور ۸: توسعه سرمایه انسانی و فرهنگ</span><span>۶۸٪</span></h4>
+            <ul>
+              <li>آموزش کارشناسان در حوزه AIOps</li>
+              <li>ارزیابی عملکرد مبتنی بر داده‌های واقعی</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function switchTab(modId, el) {
+      document.querySelectorAll('.module-section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      document.getElementById(modId).classList.add('active');
+      el.classList.add('active');
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('collapsed');
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const btn = document.getElementById('themeBtn');
+      if (html.getAttribute('data-theme') === 'dark') {
+        html.setAttribute('data-theme', 'light');
+        btn.textContent = '🌙 تم تاریک';
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        btn.textContent = '☀️ تم روشن';
+      }
+    }
+
+    function resolveHitl(cardId, msg) {
+      const card = document.getElementById(cardId);
+      card.innerHTML = `<div class="text-success" style="font-weight:600;">✓ ${msg}</div>`;
+    }
+
+    function analyzeTicket() {
+      const text = document.getElementById('ticketInput').value.trim();
+      const box = document.getElementById('ticketResult');
+      if (!text) {
+        alert('لطفاً متن درخواست را وارد کنید.');
+        return;
+      }
+      let category = 'نرم‌افزار و سامانه‌ها';
+      let priority = 'متوسط';
+      let assignee = 'کارشناس پشتیبانی سامانه‌ها';
+
+      if (text.includes('شبکه') || text.includes('اینترنت') || text.includes('قطع') || text.includes('سرور')) {
+        category = 'شبکه و زیرساخت';
+        priority = 'بحرانی (Critical)';
+        assignee = 'مهندس ارشد شبکه و زیرساخت';
+      } else if (text.includes('پرینتر') || text.includes('لپ‌تاپ') || text.includes('سخت‌افزار')) {
+        category = 'سخت‌افزار و تجهیزات';
+        priority = 'بالا (High)';
+        assignee = 'کارشناس سخت‌افزار';
+      }
+
+      box.style.display = 'block';
+      box.innerHTML = `
+        <strong>نتیجه پردازش هوشمند (NLP):</strong><br>
+        • <strong>دسته‌بندی تشخیص‌داده‌شده:</strong> ${category}<br>
+        • <strong>درجه اولویت:</strong> <span class="text-warning">${priority}</span><br>
+        • <strong>ارجاع خودکار به:</strong> ${assignee}
+      `;
+    }
+
+    function filterKb() {
+      const query = document.getElementById('kbSearch').value.toLowerCase();
+      document.querySelectorAll('.kb-item').forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(query) ? 'block' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>
